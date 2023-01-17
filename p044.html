@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TensorFlowjs</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+  </head>
+  <body>
+    <script>
+      //   const model = tf.sequential({
+      //     layers: [
+      //       tf.layers.dense({ inputShape: [784], units: 16, activation: "relu" }),
+      //       tf.layers.dense({ units: 10, activation: "softmax" }),
+      //       // activation 그래프로 나타내줌
+      //     ],
+      //   });
+      const model = tf.sequential();
+      model.add(
+        tf.layers.dense({ inputShape: [784], units: 16, activation: "relu" })
+      );
+      model.add(tf.layers.dense({ units: 10, activation: "softmax" }));
+      // 위와 같은 결과를 가진다. 배열에 추가하듯이 add()를 통해 추가할 수 있다.
+      console.log(model.layers);
+    </script>
+  </body>
+</html>

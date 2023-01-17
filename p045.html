@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TensorFlowjs</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+  </head>
+  <body>
+    <script>
+      const input = tf.input({ shape: [784] });
+      const dense1 = tf.layers
+        .dense({ units: 16, activation: "relu" })
+        .apply(input);
+      const dense2 = tf.layers
+        .dense({ units: 10, activation: "softmax" })
+        // softmax 활성화 함수? 분류될 클래스가 n개라 할때 n차원의 벡터를 입력받아 각 클래스에 속할 확률을 추정한다. 뭔말이누?
+        .apply(dense1);
+      const model = tf.model({ inputs: input, outputs: dense2 });
+      // model을 구성하는 방법인가? outputs엔 왜 dense2가 들어가는건지?
+      console.log(model);
+
+      const input2 = tf.tensor([-2, 1, 0, 5]);
+      const output2 = tf.layers
+        .activation({ activation: "relu" })
+        // relu -> 음수는 0으로
+        .apply(input2);
+      output2.print(true);
+
+      model.summary();
+      // summary는 model만 가능한가?
+    </script>
+  </body>
+</html>

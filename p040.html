@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TensorFlowjs</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+  </head>
+  <body>
+    <script>
+      const t1 = tf.tensor([1, 2, 3, 4]);
+      const t2 = tf.tensor([10, 20, 30, 40]);
+      t1.add(t2).print(true);
+      // console.log로는 출력이 안되니 print() 사용
+      t1.add(t2).log().square().print(true);
+    </script>
+  </body>
+</html>

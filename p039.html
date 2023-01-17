@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TensorFlowjs</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+  </head>
+  <body>
+    <script>
+      const t1 = tf.tensor1d([1, 2, 3]);
+      t1.print(true);
+      const t2 = tf.tensor2d([1, 2, 3, 4], [2, 2]);
+      t2.print(true);
+      const t3 = tf.tensor2d(
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+        [4, 4]
+      );
+      t3.print(true);
+      // 출력 결과물을 보면서 비교
+
+      t1.data((d) => {
+        console.log(d);
+      });
+      // 아무것도 안나옴
+      console.log(
+        t1.data((d) => {
+          return d;
+        })
+      );
+      // 위와는 다르게 잘 출력 됨 promise로 출력
+      console.log(t1.dataSync());
+      // Float32Array로 출력
+    </script>
+  </body>
+</html>

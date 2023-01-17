@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TensorFlowjs</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+  </head>
+  <body>
+    <script>
+      const a = tf.tensor([1, 2, 3]);
+      // 연산 체인은 텐서플로의 세션처럼 계산을 자동으로 수행하지 않음.
+      const result = a.square().log().neg().floor();
+      // 결과를 가져오게 하면 계산 결과 및 관련 연산이 모두 수행됨.
+      result.data().then((d) => {
+        console.log(d);
+      });
+
+      function f(x) {
+        return tf.tidy(() => {
+          const result = x.square().log().neg().floor();
+          return result;
+        });
+      }
+      f(a).print(true);
+      f(a)
+        .data()
+        .then((d) => {
+          console.log(d);
+        });
+    </script>
+  </body>
+</html>

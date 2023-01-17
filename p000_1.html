@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TensorFlowjs</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+  </head>
+  <body>
+    <script>
+      const verbose = true;
+      // 상수선언
+      const init = tf.initializers.constant({ value: 7 });
+      console.log(init);
+      // 0으로 초기화 된 텐서를 암기
+      tf.zeros([3, 3]).print(true);
+      // zeros => 0의 값을 가진다
+      tf.scalar(2).print(verbose);
+      // scalar -> 축조차 가지고 있지 않지만 값은 가질 수 있다. (rank = 축)
+
+      const arr = [];
+      for (let i = 0; i < 64; i++) {
+        arr.push(0);
+      }
+      const t1 = tf.tensor3d(arr, [4, 4, 4]);
+      t1.print(true);
+
+      tf.zeros([4, 4, 4]).print(true);
+    </script>
+  </body>
+</html>
