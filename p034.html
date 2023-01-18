@@ -9,7 +9,37 @@
   </head>
   <body>
     <script>
-      작업시작;
+      const model = tf.sequential();
+      //sequential이란? 순차 모델을 사용하는 경우, 각 레이어가 정확히 하나의 입력 텐서(?)와 하나의 출력 텐서를 갖는 일반 레이어 스택에 적합.
+      model.add(tf.layers.dense({ units: 1, inputShape: [2] }));
+      model.compile({ loss: "meanSquaredError", optimizer: "adam" });
+      // optimizer : "adam" -> 최적화 방법으로 아담을 선택, 손실함수를 기반으로 어떻게 최적화를 할 것인가를 정함.
+      const xs = tf.tensor2d(
+        [
+          [0, 0],
+          [0, 1],
+          [1, 0],
+          [1, 1],
+        ],
+        [4, 2]
+      );
+      const fitParam = {
+        epochs: 5000,
+        callbacks: {
+          onEpochEnd: function (epoch, logs) {
+            console.log("epoch", epoch, logs, "RMSE=", Math.sqrt(logs.loss));
+          },
+        },
+      };
+      // epochs번 반복하겠다?
+      const ys = tf.tensor2d([0, 1, 1, 0], [4, 1]);
+      // 결과물 0, 1, 1, 0
+      model.fit(xs, ys, fitParam).then(() => {
+        // fit -> 입력 데이터의 형태에 맞춰 데이터를 변환하기 위한 사전 구조를 맞추는 작업.
+        model.predict(tf.tensor2d([[0, 1]], [1, 2])).print();
+        //predict -> predict() 함수는 주어진 새로운 변수에 대한 예측을 수행한 결과를 예측값(fit – 점추정값에 해당)으로 출력한다.
+        // [0,1]을 넣었을 때 결과물이 뭐니?
+      });
     </script>
   </body>
 </html>

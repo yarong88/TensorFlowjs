@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TensorFlowjs</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+  </head>
+  <body>
+    <script>
+      const xs = tf.tensor2d(
+        [
+          [0, 0],
+          [0, 1],
+          [1, 0],
+          [1, 1],
+        ],
+        [4, 2]
+      );
+
+      function createModel() {
+        const model = tf.sequential();
+        model.add(
+          tf.layers.dense({ units: 8, activation: "tanh", inputShape: [2] })
+        );
+        model.add(tf.layers.dense({ units: 1, activation: "relu" }));
+        model.compile({
+          loss: "binaryCrossentropy",
+          optimizer: "adam",
+          lr: 0.1,
+        });
+        return model;
+      }
+
+      const fitParam = {
+        batchSize: 1,
+        epochs: 1000,
+        callbacks: {
+          onEpochEnd: function (epoch, logs) {
+            console.log("epoch", epoch, logs, "RMSE=", Math.sqrt(logs.loss));
+          },
+        },
+      };
+      const ys = tf.tensor2d([0, 1, 1, 0], [4, 1]);
+
+      async function createNpredict() {
+        model = createModel();
+        await model.fit(xs, ys, fitParam);
+        model.predict(tf.tensor2d([[0, 1]], [1, 2])).print();
+      }
+      createNpredict();
+    </script>
+  </body>
+</html>
