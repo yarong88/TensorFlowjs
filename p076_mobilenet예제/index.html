@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.0/dist/mobilenet.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+      #img {
+        width: 500px;
+      }
+    </style>
+  </head>
+  <body>
+    <form action="/up" method="post" enctype="multipart/form-data">
+      <div class="input-group">
+        <input
+          name="ufile"
+          type="file"
+          class="form-control"
+          id="inputGroupFile04"
+          aria-describedby="inputGroupFileAddon04"
+          aria-label="Upload"
+          required
+        />
+        <button class="btn btn-primary" type="submit">전송</button>
+      </div>
+    </form>
+    <img id="img" src="./dog.jpg" />
+    <script>
+      let socket = io();
+      const img = document.getElementById("img");
+      const prediction = "";
+      const predictions_arr = [];
+
+      const translate = function (msg) {
+        socket.emit("translate", msg);
+        socket.on("translate", (trans) => {
+          return trans;
+        });
+      };
+
+      mobilenet.load().then((model) => {
+        model.classify(img).then((predictions) => {
+          socket.emit(
+            "translate",
+            predictions[0].className +
+              (predictions[0].probability * 100).toFixed(2)
+          );
+          socket.emit(
+            "translate",
+            predictions[1].className +
+              (predictions[1].probability * 100).toFixed(2)
+          );
+          socket.emit(
+            "translate",
+            predictions[2].className +
+              (predictions[2].probability * 100).toFixed(2)
+          );
+        });
+      });
+
+      socket.on("translate", (trans) => {
+        const predictions_div = document.createElement("div");
+        document.body.appendChild(predictions_div);
+        predictions_div.innerHTML = trans + "%";
+      });
+    </script>
+  </body>
+</html>

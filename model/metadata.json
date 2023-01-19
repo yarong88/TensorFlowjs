@@ -1,0 +1,11 @@
+{
+  "tfjsVersion": "1.3.1",
+  "tmVersion": "2.4.5",
+  "packageVersion": "0.8.4-alpha2",
+  "packageName": "@teachablemachine/image",
+  "timeStamp": "2023-01-19T07:02:13.549Z",
+  "userMetadata": {},
+  "modelName": "tm-my-image-model",
+  "labels": ["가위", "바위", "보"],
+  "imageSize": 224
+}
