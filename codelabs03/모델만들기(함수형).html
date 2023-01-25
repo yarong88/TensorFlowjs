@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TensorFlowjs</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+  </head>
+  <body>
+    <script>
+      // 지도학습 과거데이터
+      let tem = [25, 26, 27];
+      let sel = [69, 72, 75];
+      let xt = tf.tensor(tem); // 이게 의미하는 게 뭘까.. 굳이 tf.tensor로 만드는 이유는?
+      let yt = tf.tensor(sel);
+
+      // 모델의 모양을 만들기
+      let X = tf.input({ shape: [1] }); // 값 하나 들어옴
+      let Y = tf.layers.dense({ units: 1 }).apply(X); // apply를 통해 연결
+      let model = tf.model({ inputs: X, outputs: Y }); // 인아웃풋 저장
+      let compileParam = {
+        optimizer: tf.train.adam(), // train ??
+        loss: tf.losses.meanSquaredError,
+      }; // 최적화의 loss 측정방법종류
+      model.compile(compileParam); // 컴파일
+
+      // 데이터로 학습을 시작
+      const fitParm = {
+        epochs: 6000,
+        callbacks: {
+          onEpochEnd: function (epoch, logs) {
+            console.log("epoch", epoch, logs, "RMSE=>", Math.sqrt(logs.loss));
+            // RMSE는 뭐임? sprt는 뭐임?
+          },
+        },
+      };
+      const my = tf.tensor([32]);
+      model.fit(xt, yt, fitParm).then((_) => {
+        // model.fit(xt, yt, fitParm) => 데이터와 모델을 통해 모델링을 한다. => 그리고 거기서 나온 식으로
+        let result = model.predict(xt);
+        // model.predict(my) => 특정 값의 예상값을 뽑아낼 수 있다.
+        result.print();
+        // model.save("downloads://my-model"); // 모델을 저장
+        model.save("localstorage://my-model-1");
+        console.log("모델 저장됨");
+      });
+    </script>
+  </body>
+</html>

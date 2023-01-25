@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TensorFlowjs</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+  </head>
+  <body>
+    <script>
+      const tem = [29, 30, 31, 32];
+      const xt = tf.tensor(tem);
+
+      tf.loadLayersModel("localstorage://my-model-1").then((model) => {
+        console.log("모델 로드됨");
+        let newResult = model.predict(xt);
+        newResult.print();
+        const weights = model.getWeights();
+        console.log(weights);
+        let rel = 0;
+        let bia = 0;
+        const weight = weights[0].array().then((array) => (rel = array[0][0]));
+        const bias = weights[1].array().then((array) => (bia = array[0]));
+        console.log(weight);
+        console.log(bias);
+        // const weight = weights[0]
+        //   .array()
+        //   .then((array) => console.log(array[0][0])); // 가중치
+        // const bias = weights[1].array().then((array) => console.log(array[0])); // 편향
+        // 왜 안나오지..
+      });
+    </script>
+  </body>
+</html>

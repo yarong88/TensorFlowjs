@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TensorFlowjs</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+  </head>
+  <body>
+    <script>
+      let X = tf.input({ shape: [13] });
+      let Y = tf.layers.dense({ units: 1 }).apply(X);
+      let model = tf.model({ inputs: X, outputs: Y });
+      let compileParam = {
+        optimizer: tf.train.adam(),
+        loss: tf.losses.meanSquaredError,
+      };
+      model.compile(compileParam);
+
+      const fitParm = {
+        epochs: 6000,
+        callbacks: {
+          onEpochEnd: function (epoch, logs) {
+            console.log("epoch", epoch, logs, "RMSE=>", Math.sqrt(logs.loss));
+          },
+        },
+      };
+
+      fetch("./보스턴집값.json")
+        .then((response) => {
+          return response.json();
+        })
+        .then((jsondata) => {
+          const database = [];
+          const dataresult = [];
+          for (let i = 0; i < jsondata.Data.length; i++) {
+            const dataunit = [];
+            dataunit.push(jsondata.Data[i].CRIM);
+            dataunit.push(jsondata.Data[i].ZN);
+            dataunit.push(jsondata.Data[i].INDUS);
+            dataunit.push(jsondata.Data[i].CHAS);
+            dataunit.push(jsondata.Data[i].NOX);
+            dataunit.push(jsondata.Data[i].RM);
+            dataunit.push(jsondata.Data[i].AGE);
+            dataunit.push(jsondata.Data[i].DIS);
+            dataunit.push(jsondata.Data[i].RAD);
+            dataunit.push(jsondata.Data[i].TAX);
+            dataunit.push(jsondata.Data[i].PTRATIO);
+            dataunit.push(jsondata.Data[i].B);
+            dataunit.push(jsondata.Data[i].LSTAT);
+            database.push(dataunit);
+            dataresult.push([jsondata.Data[i].MEDV]);
+          }
+          let xt = tf.tensor(database);
+          let yt = tf.tensor(dataresult);
+          model.fit(xt, yt, fitParm).then((_) => {
+            let result = model.predict(xt);
+            result.print();
+            model.save("localstorage://my-model-1");
+            console.log("모델 저장됨");
+          });
+        });
+    </script>
+  </body>
+</html>
