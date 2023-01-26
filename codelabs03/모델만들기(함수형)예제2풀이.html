@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TensorFlowjs</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- 엑셀 파일을 불러오기 위한  -->
+  </head>
+  <body>
+    <input type="file" onchange="readExcel()" /><button id="modeling-button">
+      분석시작
+    </button>
+    <!-- onchange? -->
+    <script>
+      let house = [];
+      let medv = [];
+      const readExcel = (_) => {
+        let input = this.event.target; // target?
+        let reader = new FileReader(); // FileReader??
+        reader.onload = function () {
+          // onload?
+          let data = reader.result;
+          let wordBook = XLSX.read(data, { type: "binary" }); // ???
+          const x = wordBook.Sheets.Data; // 엑셀의 sheet를 정한다
+          for (let j = 2; j < 508; j++) {
+            let line = [];
+            let line2 = [];
+            for (let i = 65; i < 78; i++) {
+              let str = String.fromCharCode(i) + j;
+              // fromCharCode() 아스키코드로 DEC를 입력하면 Char가 출력된다.
+              line.push(x[str].v);
+              // A에서 M까지 모은다.
+            }
+            line2.push(x["N" + j].v);
+            house.push(line);
+            medv.push(line2);
+          }
+        };
+        reader.readAsBinaryString(input.files[0]);
+        // ???
+      };
+
+      const modeling = (_) => {
+        console.log(house);
+        let xt = tf.tensor(house); // 이게 의미하는 게 뭘까.. 굳이 tf.tensor로 만드는 이유는?
+        let yt = tf.tensor(medv);
+
+        // 모델의 모양을 만들기
+        let X = tf.input({ shape: [13] }); // 값 하나 들어옴
+        let Y1 = tf.layers.dense({ units: 13, activation: "relu" }).apply(X); // apply를 통해 연결
+        let Y2 = tf.layers.dense({ units: 13, activation: "relu" }).apply(Y1);
+        let Z = tf.layers.dense({ units: 1 }).apply(Y2);
+        let model = tf.model({ inputs: X, outputs: Z }); // 인아웃풋 저장
+        let compileParam = {
+          optimizer: tf.train.adam(), // train ??
+          loss: tf.losses.meanSquaredError,
+        }; // 최적화의 loss 측정방법종류
+        model.compile(compileParam); // 컴파일
+
+        // 데이터로 학습을 시작
+        const fitParm = {
+          epochs: 3000,
+          callbacks: {
+            onEpochEnd: function (epoch, logs) {
+              console.log("epoch", epoch, logs, "RMSE=>", Math.sqrt(logs.loss));
+              // RMSE는 뭐임? sprt는 뭐임?
+            },
+          },
+        };
+        // const my = tf.tensor([32]);
+        model.fit(xt, yt, fitParm).then((_) => {
+          // model.fit(xt, yt, fitParm) => 데이터와 모델을 통해 모델링을 한다. => 그리고 거기서 나온 식으로
+          let result = model.predict(xt);
+          // model.predict(my) => 특정 값의 예상값을 뽑아낼 수 있다.
+          result.print();
+          // model.save("downloads://my-model"); // 모델을 저장
+          model.save("localstorage://my-model-1");
+          console.log("모델 저장됨");
+        });
+      };
+
+      const modeling_button = document.getElementById("modeling-button");
+      modeling_button.addEventListener("click", () => {
+        modeling();
+      });
+    </script>
+  </body>
+</html>
